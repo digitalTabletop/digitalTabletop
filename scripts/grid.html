@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GRID TEST</title>
+    <style>
+      body {
+        overflow-x: auto;
+      }
+      td{
+        height: 1in;
+        width: 1in;
+        border: 2px solid Gray;
+      }
+      td[clicked=y]{
+        background-color: red;
+      }
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var maxX = 13;
+      var maxY = 6;
+
+      var body    = document.getElementsByTagName("body")[0];
+      var tbl     = document.createElement("table");
+      var tblBody = document.createElement("tbody");
+
+      for ( y=0; y<maxY; y++) {
+        var row = document.createElement("tr");
+        for (var x = 0; x < maxX; x++) {
+          var cell = document.createElement("td");
+          cell.setAttribute("x", x);
+          cell.setAttribute("y", y);
+          cell.setAttribute("clicked", "n")
+          row.appendChild(cell);
+        }
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+      body.appendChild(tbl);
+      body.addEventListener("click", function(e){
+        var t = e.target;
+        console.log("hello");
+        if (t.getAttribute("clicked") === "y") {
+          t.setAttribute("clicked", "n");
+          console.log("hi");
+        }
+        else{
+          t.setAttribute("clicked", "y");
+        }
+      });
+    </script>
+  </body>
+</html>

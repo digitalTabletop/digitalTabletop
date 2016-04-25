@@ -1,4 +1,4 @@
-#!/home/finley2/Documents/projects/digitalTabletop/serverv1.py/venv/bin/python
+#!/home/finley2/Documents/projects/digitalTabletop/serverv1/venv/bin/python
 
 import sys
 import getopt

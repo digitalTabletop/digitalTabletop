@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GRID TEST</title>
+    <style>
+      body {
+        overflow-x: auto;
+      }
+      td{
+        height: 1in;
+        width: 1in;
+        border: 2px solid Gray;
+      }
+      td[clicked=y]{
+        background-color: red;
+      }
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var maxX = 5;
+      var maxY = 5;
+
+      var ws = new WebSocket("ws://localhost:8080");
+
+
+      var body    = document.getElementsByTagName("body")[0];
+      var tbl     = document.createElement("table");
+      var tblBody = document.createElement("tbody");
+
+      for ( y=0; y<maxY; y++) {
+        var row = document.createElement("tr");
+        for (var x = 0; x < maxX; x++) {
+          var cell = document.createElement("td");
+          cell.setAttribute("id", x+","+y);
+          row.appendChild(cell);
+        }
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+      body.appendChild(tbl);
+      body.addEventListener("click", function(e){
+        var t = e.target;
+        console.log(t.getAttribute("id"));
+        payload = {}
+        payload.x = t.getAttribute("id").split(",")[0];
+        payload.y = t.getAttribute("id").split(",")[1];
+        ws.send(JSON.stringify(payload));
+      });
+      ws.onmessage = function(event){
+        var move = JSON.parse(event.data);
+        var expected_id = move.x+","+move.y;
+        console.log(expected_id);
+        var location = document.getElementById(expected_id);
+        location.style = "background-color:"+move.color;
+      }
+    </script>
+  </body>
+</html>

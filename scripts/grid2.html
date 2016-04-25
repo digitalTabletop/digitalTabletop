@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GRID TEST 2</title>
+    <style>
+      body {
+        overflow-x: auto;
+      }
+      td{
+        height: 1in;
+        width: 1in;
+        border: 2px solid Gray;
+      }
+      td[clicked=y]{
+        background-color: red;
+      }
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+    (function($) {
+      $(document).ready(function(){
+        var x = 10;
+        var y = 10;
+        var table = document.createElement("table");
+        var tablebody = document.createElement("tbody");
+        for (i=0;i<y;i++){
+          var row = document.createElement("tr");
+          for (j=0;j<x;j++){
+            var cell = document.createElement("td");
+            cell.setAttribute("y", i);
+            cell.setAttribute("x", j);
+            row.appendChild(cell);
+            console.log(i, j)
+          }
+          tablebody.appendChild(row);
+        }
+        table.appendChild(tablebody);
+      });
+    })(jQuery);
+    </script>
+  </body>
+</html>

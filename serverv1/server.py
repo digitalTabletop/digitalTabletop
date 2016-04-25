@@ -4,11 +4,11 @@ import random
 import json
 
 COLORS = [
-    "red",
-    "orange",
-    "blue",
-    "green",
-    "purple"
+    "rgb(255, 0, 0)",
+    "rgb(255, 165, 0)",
+    "rgb(0, 0, 255)",
+    "rgb(0, 128, 0)",
+    "rgb(128, 0, 128)"
 ]
 
 USERS = []
@@ -34,8 +34,7 @@ async def test(websocket, path):
                     }
                     await user["websocket"].send(json.dumps(response))
     except websockets.exceptions.ConnectionClosed:
-        pass
-    print("%s disconneced" % websocket.remote_address)
+        USERS.remove(entry)
 START_SERVER = websockets.serve(test, 'localhost', 8080)
 
 asyncio.get_event_loop().run_until_complete(START_SERVER)

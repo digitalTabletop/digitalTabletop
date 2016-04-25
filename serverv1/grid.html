@@ -48,17 +48,26 @@
       body.addEventListener("click", function(e){
         var t = e.target;
         console.log(t.getAttribute("id"));
-        payload = {}
+        payload = {};
         payload.x = t.getAttribute("id").split(",")[0];
         payload.y = t.getAttribute("id").split(",")[1];
         ws.send(JSON.stringify(payload));
       });
       ws.onmessage = function(event){
         var move = JSON.parse(event.data);
+         // I almost feel sick doing this...
+        var badCells = document.getElementsByTagName("td");
+        for (var i = 0; i < badCells.length; i++) {
+          console.log(window.getComputedStyle(badCells[i]).getPropertyValue('background-color'));
+          if (window.getComputedStyle(badCells[i]).getPropertyValue('background-color') === move.color){
+            badCells[i].style = "background-color:white";
+          }
+        }
+        // Javascript just has a shit DOM api
         var expected_id = move.x+","+move.y;
         console.log(expected_id);
         var location = document.getElementById(expected_id);
-        location.style = "background-color:"+move.color;
+        location.style = "background-color:"+move.color+";";
       }
     </script>
   </body>

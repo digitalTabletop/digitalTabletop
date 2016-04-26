@@ -7,10 +7,14 @@
       body {
         overflow-x: auto;
       }
+      table {
+        display:block;
+      }
       td{
         height: 1in;
-        width: 1in;
-        border: 2px solid Gray;
+        min-width: 1in;
+        border: 1px solid Black;
+        background-size: 1in 1in;
       }
       td[clicked=y]{
         background-color: red;
@@ -24,10 +28,10 @@
   </head>
   <body>
     <script type="text/javascript">
-      var maxX = 5;
-      var maxY = 5;
+      var maxX = 13;
+      var maxY = 20;
 
-      var ws = new WebSocket("ws://localhost:8080");
+      var ws = new WebSocket("ws://10.0.25.102:8080");
 
 
       var body    = document.getElementsByTagName("body")[0];
@@ -45,7 +49,7 @@
       }
       tbl.appendChild(tblBody);
       body.appendChild(tbl);
-      body.addEventListener("click", function(e){
+      tbl.addEventListener("click", function(e){
         var t = e.target;
         console.log(t.getAttribute("id"));
         payload = {};
@@ -55,19 +59,21 @@
       });
       ws.onmessage = function(event){
         var move = JSON.parse(event.data);
-         // I almost feel sick doing this...
-        var badCells = document.getElementsByTagName("td");
-        for (var i = 0; i < badCells.length; i++) {
-          console.log(window.getComputedStyle(badCells[i]).getPropertyValue('background-color'));
-          if (window.getComputedStyle(badCells[i]).getPropertyValue('background-color') === move.color){
-            badCells[i].style = "background-color:white";
-          }
+        var duplicateCells = document.querySelectorAll("[uid="+move.uid+"]");
+        for (i=0; i<duplicateCells.length; i++) {
+          duplicateCells[i].style = "background:none;"
+          duplicateCells[i].setAttribute("uid", "")
         }
         // Javascript just has a shit DOM api
         var expected_id = move.x+","+move.y;
         console.log(expected_id);
         var location = document.getElementById(expected_id);
-        location.style = "background-color:"+move.color+";";
+        location.setAttribute("uid", move.uid)
+        if (move.color.split("(")[0] == "url") {
+          location.style = "background:"+move.color+";background-size:1in 1in";
+        }else{
+          location.style = "background-color:"+move.color+";";
+        }
       }
     </script>
   </body>

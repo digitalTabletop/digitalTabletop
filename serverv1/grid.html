@@ -59,20 +59,19 @@
       });
       ws.onmessage = function(event){
         var move = JSON.parse(event.data);
-        var duplicateCells = document.querySelectorAll("[uid="+move.uid+"]");
+        console.log(move.uid);
+        var duplicateCells = document.querySelectorAll("[uid='"+move.uid+"']");
         for (i=0; i<duplicateCells.length; i++) {
           duplicateCells[i].style = "background:none;"
           duplicateCells[i].setAttribute("uid", "")
         }
         // Javascript just has a shit DOM api
-        var expected_id = move.x+","+move.y;
-        console.log(expected_id);
+        var expected_id = move.x+","+move.y; // ID of the cell on the grid, x,y coordinates
+        console.log(expected_id); // print the x,y of the place that moving to
         var location = document.getElementById(expected_id);
         location.setAttribute("uid", move.uid)
         if (move.color.split("(")[0] == "url") {
           location.style = "background:"+move.color+";background-size:1in 1in";
-        }else{
-          location.style = "background-color:"+move.color+";";
         }
       }
     </script>

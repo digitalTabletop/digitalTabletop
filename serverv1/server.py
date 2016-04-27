@@ -22,7 +22,7 @@ async def test(websocket, path):
         "state":None
     }
     USERS.append(entry)
-    print("%s connected as %s" % (websocket.remote_address, entry["color"]))
+    print("%s connected as %s" % (websocket.remote_address, entry["uid"]))
     try:
         while True: # while connection open...
             message = await websocket.recv()
@@ -32,7 +32,8 @@ async def test(websocket, path):
                 for user in USERS:
                     response = {"x": message["x"],
                                 "y": message["y"],
-                                "color": entry["color"]
+                                "color": entry["color"],
+                                "uid": entry["uid"]
                     }
                     await user["websocket"].send(json.dumps(response))
     except websockets.exceptions.ConnectionClosed:

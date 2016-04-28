@@ -28,6 +28,7 @@
   </head>
   <body>
     <script type="text/javascript">
+
       var maxX = 13;
       var maxY = 20;
 
@@ -51,6 +52,7 @@
       body.appendChild(tbl);
       tbl.addEventListener("click", function(e){
         var t = e.target;
+
         console.log(t.getAttribute("id"));
         payload = {};
         payload.x = t.getAttribute("id").split(",")[0];

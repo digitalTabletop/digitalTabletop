@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GRID TEST</title>
+    <style>
+      body {
+        overflow-x: auto;
+      }
+      table {
+        display:block;
+      }
+      td{
+        height: 1in;
+        min-width: 1in;
+        border: 1px solid Black;
+        background-size: 1in 1in;
+      }
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var SELECTED = null;
+      var ws = new WebSocket("ws://localhost:8080");
+
+      // GENERATE MAP
+      var maxX = 13;
+      var maxY = 20;
+
+      var body    = document.getElementsByTagName("body")[0];
+      var tbl     = document.createElement("table");
+      var tblBody = document.createElement("tbody");
+
+      for ( y=0; y<maxY; y++) {
+        var row = document.createElement("tr");
+        for (var x = 0; x < maxX; x++) {
+          var cell = document.createElement("td");
+          cell.setAttribute("id", x+","+y);
+          row.appendChild(cell);
+        }
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+      body.appendChild(tbl);
+
+      // Click event
+      tbl.addEventListener("click", function(e){
+        var t = e.target;
+        if (t.getAttribute("id").split(",") != SELECTED && SELECTED == null){ // if there is nothing selected and a grid cell is clicked, do this
+          SELECTED = t.getAttribute("id").split(","); // turn x,y into [x, y]
+          t.style.remove("border: 1px solid black;") // remove border
+          t.style = "border: 1px solid yellow;"; // set border to yellow
+        } else if (t.getAttribute == SELECTED){ // if the selected grid cell is clicked, do this
+          SELECTED = null; // remove selected
+        } else if (t.getAttribute("id") != SELECTED) { // if a grid cell other than the selected one is clicked
+          document.getElementById(SELECTED).style.remove("border: 1px solid yellow;"); //remove border
+          document.getElementById(SELECTED).style = "border: 1px solid black;"; // set border to black
+
+          var payload = {}; // initialize payload to be sent over websocket
+          payload.x = t.getAttribute("id").split(",")[0]; // set x value of character
+          payload.y = t.getAttribute("id").split(",")[1]; // set y value of character
+          payload.cid = document.getElementById(SELECTED).getAttribute("cid"); // get the id of character
+
+          ws.send(JSON.stringify(payload)); // send to server via websockets
+        }
+      });
+
+      // Recieve websocket messages
+      ws.onmessage = function(event){
+        var move = JSON.parse(event.data); // Response
+        var duplicateCells = document.querySelectorAll("[cid='"+move.cid+"']");
+        for (i=0; i<duplicateCells.length; i++) {
+          duplicateCells[i].style = "background:none;";
+          duplicateCells[i].setAttribute("cid", "");
+        }
+        var move_coords = move.x+","+move.y;
+        console.log(move_coords);
+        var newLocation = document.getElementById(move_coords);
+        newLocation.style = "background: url("+move.avatar+")";
+        newLocation.setAttribute("cid", move.cid);
+      }
+
+
+
+    </script>
+
+
+        // Javascript just has a shit DOM api
+        var expected_id = move.x+","+move.y; // ID of the cell on the grid, x,y coordinates
+        console.log(expected_id); // print the x,y of the place that moving to
+        var location = document.getElementById(expected_id);
+        location.setAttribute("uid", move.uid)
+        if (move.color.split("(")[0] == "url") {
+          location.style = "background:"+move.color+";background-size:1in 1in";
+        }
+      }
+    </script>
+  </body>
+</html>

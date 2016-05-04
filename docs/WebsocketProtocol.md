@@ -8,7 +8,8 @@ The protocol used to communicate moves to the server using json.
   {
     "x": "<int>",
     "y": "<int>",
-    "cid": "<base64>"
+    "cid": "<base64>",
+    "avatar" : "<css url>"
   }
   ```
   Response:

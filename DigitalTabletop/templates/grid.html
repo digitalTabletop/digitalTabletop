@@ -116,7 +116,7 @@
           payload.y = t.getAttribute("id").split(",")[1]; // set y value of character
           payload.avatar = document.getElementById(SELECTED).style["background"];
           payload.cid = document.getElementById(SELECTED).getAttribute("cid"); // get the id of character
-
+          console.log(payload)
           document.getElementById(SELECTED).setAttribute("cid", "");
 
 
@@ -137,9 +137,8 @@
         }
         var move_coords = move.x+","+move.y;
         console.log(move_coords);
-        var newLocation = document.getElementById(move_coords);
-        newLocation.style["background"]= move.avatar;
-        newLocation.setAttribute("cid", move.cid);
+        document.getElementById(move_coords).style["background"] = move.avatar;
+        document.getElementById(move_coords).setAttribute("cid", move.cid);
       }
 
     </script>

@@ -82,26 +82,34 @@
       tbl.addEventListener("click", function(e){
         // event.preventDefault();
         var t = e.target;
-        if ((t.getAttribute("id").split(",") != SELECTED) && (SELECTED == null))
+        if ((t.getAttribute("id").split(",") != SELECTED) && (SELECTED == null) && (t.getAttribute("cid") != null))
         { // if there is nothing selected and a grid cell is clicked, do this
 
           SELECTED = t.getAttribute("id"); // turn x,y into [x, y]
-          // t.style.remove("border: 1px solid black;") // remove border
-          t.style = "border: 2px solid yellow;"; // set border to yellow
+          t.style["border"] = ""; // remove border
+          t.style["border"] = "2px solid yellow"; // set border to yellow
 
         }
         else if (t.getAttribute("id") == SELECTED)
         { // if the selected grid cell is clicked, do this
 
-          document.getElementById(SELECTED).style = "border: 1px solid black;"; // set border to black
+          document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
           SELECTED = null; // remove selected
 
         }
-        else if (t.getAttribute("id") != SELECTED && SELECTED != null)
+        else if (t.getAttribute("id") != SELECTED && SELECTED != null && t.getAttribute("cid") == null)
         { // if a grid cell other than the selected one is clicked
 
-          //document.getElementById(SELECTED).style.remove("border: 1px solid yellow;"); //remove border
-          document.getElementById(SELECTED).style = "border: 1px solid black;"; // set border to black
+          document.getElementById(SELECTED).style["border"] = ""; //remove border
+          document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
+
+          var cid = document.getElementById(SELECTED).getAttribute("cid");
+          document.getElementById(SELECTED).setAttribute("cid", null);
+          t.setAttribute("cid", cid);
+          t.style["background"] =  document.getElementById(SELECTED).style["background"];
+          console.log(t.style["background"]);
+          t.style["background-size"] = "1in 1in";
+          document.getElementById(SELECTED).style["background"] = "";
 
           var payload = {}; // initialize payload to be sent over websocket
           payload.x = t.getAttribute("id").split(",")[0]; // set x value of character

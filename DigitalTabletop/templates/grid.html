@@ -26,7 +26,7 @@
   <body>
     <script type="text/javascript">
       var SELECTED = null;
-      //var ws = new WebSocket("ws://localhost:8080");
+      var ws = new WebSocket("ws://localhost:8080");
 
       // GENERATE MAP
       var maxX = 13;
@@ -105,7 +105,6 @@
           document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
 
           var cid = document.getElementById(SELECTED).getAttribute("cid");
-          document.getElementById(SELECTED).setAttribute("cid", "");
           t.setAttribute("cid", cid);
           t.style["background"] =  document.getElementById(SELECTED).style["background"];
           console.log(t.style["background"]);
@@ -115,28 +114,33 @@
           var payload = {}; // initialize payload to be sent over websocket
           payload.x = t.getAttribute("id").split(",")[0]; // set x value of character
           payload.y = t.getAttribute("id").split(",")[1]; // set y value of character
+          payload.avatar = document.getElementById(SELECTED).style["background"];
           payload.cid = document.getElementById(SELECTED).getAttribute("cid"); // get the id of character
 
-          //ws.send(JSON.stringify(payload)); // send to server via websockets
+          document.getElementById(SELECTED).setAttribute("cid", "");
+
+
+          ws.send(JSON.stringify(payload)); // send to server via websockets
           SELECTED = null;
         }
         console.log(t.getAttribute("cid"));
       });
 
-      // Recieve websocket messages
-      // ws.onmessage = function(event){
-      //   var move = JSON.parse(event.data); // Response
-      //   var duplicateCells = document.querySelectorAll("[cid='"+move.cid+"']");
-      //   for (i=0; i<duplicateCells.length; i++) {
-      //     duplicateCells[i].style = "background:none;";
-      //     duplicateCells[i].setAttribute("cid", "");
-      //   }
-      //   var move_coords = move.x+","+move.y;
-      //   console.log(move_coords);
-      //   var newLocation = document.getElementById(move_coords);
-      //   newLocation.style = "background: url("+move.avatar+")";
-      //   newLocation.setAttribute("cid", move.cid);
-      // }
+      //Recieve websocket messages
+      ws.onmessage = function(event){
+        var move = JSON.parse(event.data); // Response
+        var duplicateCells = document.querySelectorAll("[cid='"+move.cid+"']");
+        for (i=0; i<duplicateCells.length; i++)
+        {
+          duplicateCells[i].style["background"] = "";
+          duplicateCells[i].setAttribute("cid", "");
+        }
+        var move_coords = move.x+","+move.y;
+        console.log(move_coords);
+        var newLocation = document.getElementById(move_coords);
+        newLocation.style["background"]= move.avatar;
+        newLocation.setAttribute("cid", move.cid);
+      }
 
     </script>
     </body>

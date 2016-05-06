@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Map Creation</title>
+  </head>
+  <body>
+    <a href="{{ url_for("assets")}}">Upload new Images</a>
+    <form class="" action="/dm" method="post">
+      Background:
+      <select name="background">
+        {% for file in files %}
+          <option value="{{ file }}">{{ file }}</option>
+        {% endfor %}
+      </select>
+      <ul id="props">
+        <li>
+          <span>prop 1 : </span>
+          <select name="prop1.image">
+            {% for file in files %}
+              <option value="{{ file }}">{{ file }}</option>
+            {% endfor %}
+          </select>
+          <input name="prop1.size" type="text" placeholder="Size x,y">
+          <input name="prop1.position" type="text" placeholder="Position x, y">
+        </li>
+      </ul>
+      <script type="text/javascript">
+      propTemplate = '<li><span>NAME : </span><select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select><input name="NAME.size" type="text" placeholder="Size x,y"><input name="NAME.position" type="text" placeholder="Position x, y"></li>'
+      NUMBER = 2
+      function addProp() {
+        document.getElementById("props").innerHTML += propTemplate.replace("NAME", "prop"+NUMBER.toString());
+        NUMBER += 1
+      }
+      </script>
+      <a href="#" onclick="addProp();">Prop</a><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

@@ -13,13 +13,17 @@
       td{
         height: 1in;
         min-width: 1in;
+        width: 1in;
         border: 1px solid Black;
         background-size: 1in 1in;
       }
       table {
         border-collapse: collapse;
         table-layout: fixed;
+        background: url("static/{{ MAP["background"] }}");
+        background-size: 1in 1in;
       }
+      
 
     </style>
   </head>
@@ -29,8 +33,8 @@
       var ws = new WebSocket("ws://localhost:8080");
 
       // GENERATE MAP
-      var maxX = 13;
-      var maxY = 20;
+      var maxX = 100;
+      var maxY = 100;
 
       var body    = document.getElementsByTagName("body")[0];
       var tbl     = document.createElement("table");
@@ -101,7 +105,6 @@
         else if (t.getAttribute("id") != SELECTED && SELECTED != null && t.getAttribute("cid") == "")
         { // if a grid cell other than the selected one is clicked
 
-          document.getElementById(SELECTED).style["border"] = ""; //remove border
           document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
 
           var cid = document.getElementById(SELECTED).getAttribute("cid");
@@ -109,18 +112,21 @@
           t.style["background"] =  document.getElementById(SELECTED).style["background"];
           console.log(t.style["background"]);
           t.style["background-size"] = "1in 1in";
-          document.getElementById(SELECTED).style["background"] = "";
 
           var payload = {}; // initialize payload to be sent over websocket
           payload.x = t.getAttribute("id").split(",")[0]; // set x value of character
           payload.y = t.getAttribute("id").split(",")[1]; // set y value of character
           payload.avatar = document.getElementById(SELECTED).style["background"];
           payload.cid = document.getElementById(SELECTED).getAttribute("cid"); // get the id of character
-          console.log(payload)
-          document.getElementById(SELECTED).setAttribute("cid", "");
+
+          console.log(payload); // log payload
+
+          document.getElementById(SELECTED).setAttribute("cid", ""); // set cid to none
+          document.getElementById(SELECTED).style["background"] = ""; // set background
 
 
           ws.send(JSON.stringify(payload)); // send to server via websockets
+
           SELECTED = null;
         }
         console.log(t.getAttribute("cid"));
@@ -129,9 +135,12 @@
       //Recieve websocket messages
       ws.onmessage = function(event){
         var move = JSON.parse(event.data); // Response
+
         var duplicateCells = document.querySelectorAll("[cid='"+move.cid+"']");
-        for (i=0; i<duplicateCells.length; i++)
+
+        for (var i=0; i<duplicateCells.length; i++)
         {
+          console.log(duplicateCells[i].id);
           duplicateCells[i].style["background"] = "";
           duplicateCells[i].setAttribute("cid", "");
         }

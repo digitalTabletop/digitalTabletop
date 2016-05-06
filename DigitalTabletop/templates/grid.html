@@ -13,17 +13,16 @@
       td{
         height: 1in;
         min-width: 1in;
-        width: 1in;
         border: 1px solid Black;
         background-size: 1in 1in;
       }
       table {
         border-collapse: collapse;
         table-layout: fixed;
-        background: url("static/{{ MAP["background"] }}");
-        background-size: 1in 1in;
+        z-index: 1;
+        position: absolute;
       }
-      
+
 
     </style>
   </head>
@@ -31,10 +30,11 @@
     <script type="text/javascript">
       var SELECTED = null;
       var ws = new WebSocket("ws://localhost:8080");
-
       // GENERATE MAP
-      var maxX = 100;
-      var maxY = 100;
+      var MAP = {{ MAP | safe }};
+
+      var maxX = {{ MAP["size"][0] }};
+      var maxY = {{ MAP["size"][1] }};
 
       var body    = document.getElementsByTagName("body")[0];
       var tbl     = document.createElement("table");
@@ -52,6 +52,25 @@
       }
       tbl.appendChild(tblBody);
       body.appendChild(tbl);
+
+      // For each prop
+      for (var item in MAP.props){
+        if (MAP.props.hasOwnProperty(item)){
+          console.log(item);
+          var prop = document.createElement("img")
+          prop.setAttribute("src", "/static/"+MAP.props[item].image);
+          prop.style["width"] = MAP.props[item].sizeX+"in";
+          prop.style["height"] = MAP.props[item].sizeY+"in";
+          console.log(MAP.props[item].x, MAP.props[item].y)
+          positionalElement = document.getElementById(MAP.props[item].x+","+MAP.props[item].y);
+          prop.style["position"] = "absolute";
+          prop.style["z-index"] = "-1";
+          prop.style["top"] = document.getElementById(MAP.props[item].x+","+MAP.props[item].y).offsetTop+"px";
+          prop.style["left"] = document.getElementById(MAP.props[item].x+","+MAP.props[item].y).offsetLeft+"px";
+          body.appendChild(prop);
+
+        }
+      }
 
       // Click event
       tbl.addEventListener("contextmenu", function(e){

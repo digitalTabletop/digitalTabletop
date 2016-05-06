@@ -7,6 +7,8 @@
   <body>
     <a href="{{ url_for("assets")}}">Upload new Images</a>
     <form class="" action="/dm" method="post">
+      MapSize:
+      <input name="size" type="text" placeholder="x,y">
       Background:
       <select name="background">
         {% for file in files %}
@@ -15,6 +17,7 @@
       </select>
       <ul id="props">
         <li>
+          <input type="hidden" value="1" name="prop1">
           <span>prop 1 : </span>
           <select name="prop1.image">
             {% for file in files %}
@@ -26,7 +29,7 @@
         </li>
       </ul>
       <script type="text/javascript">
-      propTemplate = '<li><span>NAME : </span><select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select><input name="NAME.size" type="text" placeholder="Size x,y"><input name="NAME.position" type="text" placeholder="Position x, y"></li>'
+      propTemplate = '<li><input type="hidden" value="1" name="NAME"><span>NAME : </span><select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select><input name="NAME.size" type="text" placeholder="Size x,y"><input name="NAME.position" type="text" placeholder="Position x, y"></li>'
       NUMBER = 2
       function addProp() {
         document.getElementById("props").innerHTML += propTemplate.replace("NAME", "prop"+NUMBER.toString());

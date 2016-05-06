@@ -1,9 +1,10 @@
 import os
+import json
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug import secure_filename
 
 
-mapDict = {}
+mapDict = {"size":[2, 2]}
 UPLOAD_FOLDER = 'static/'
 ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"])
 
@@ -17,22 +18,27 @@ def allowed_file(filename):
 
 @app.route("/")
 def index():
-    global MAP
     return render_template("grid.html", MAP=mapDict)
 
 @app.route("/dm", methods=["POST","GET"])
 def dm():
+    global mapDict
     if request.method == "POST":
-        mapDict["background"] = request.form.get("background")
+        if request.form.get("background") != "":
+            mapDict["background"] = request.form.get("background")
+        if request.form.get("size") != "":
+            mapDict["size"] = request.form.get("size").split(",")
         mapDict["props"] = {}
-        for key in request.form:
-            if "prop" in key and "." not in key:
+        i = 1
+        for key in request.form.keys():
+            if "prop"+str(i) == key:
                 mapDict["props"][key] = {
+                    "image" : request.form.get(key+".image"),
                     "sizeX" : request.form.get(key+".size").split(",")[0],
                     "sizeY" : request.form.get(key+".size").split(",")[1],
-                    "x"
+                    "x": request.form.get(key+".position").split(",")[0],
+                    "y": request.form.get(key+".position").split(",")[1]
                 }
-
     files = os.listdir(app.config["UPLOAD_FOLDER"])
     return render_template("dm.html", files=files)
 

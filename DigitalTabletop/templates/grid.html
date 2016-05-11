@@ -6,9 +6,11 @@
     <style>
       body {
         overflow-x: auto;
+        margin:0px;
       }
       table {
         display:block;
+        margin:none;
       }
       td{
         height: 1in;
@@ -62,15 +64,16 @@
           prop.style["width"] = MAP.props[item].sizeX+"in";
           prop.style["height"] = MAP.props[item].sizeY+"in";
           console.log(MAP.props[item].x, MAP.props[item].y)
-          positionalElement = document.getElementById(MAP.props[item].x+","+MAP.props[item].y);
           prop.style["position"] = "absolute";
           prop.style["z-index"] = "-1";
-          prop.style["top"] = document.getElementById(MAP.props[item].x+","+MAP.props[item].y).offsetTop+"px";
-          prop.style["left"] = document.getElementById(MAP.props[item].x+","+MAP.props[item].y).offsetLeft+"px";
+          prop.style["top"] = MAP.props[item].y+"in";
+          prop.style["left"] = MAP.props[item].x+"in";
           body.appendChild(prop);
 
         }
       }
+
+      body.style["background-image"] = MAP.background;
 
       // Click event
       tbl.addEventListener("contextmenu", function(e){
@@ -96,7 +99,7 @@
         {
 
           e.target.setAttribute("cid", Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5));
-          e.target.style ="background:url('/static/paladin.jpg'); background-size:1in 1in;"
+          e.target.style ="background:url('/static/Paladin.png'); background-size:1in 1in;"
 
         }
         return false;
@@ -111,7 +114,7 @@
 
           SELECTED = t.getAttribute("id"); // turn x,y into [x, y]
           t.style["border"] = ""; // remove border
-          t.style["border"] = "2px solid yellow"; // set border to yellow
+          t.style["border"] = "2px solid red"; // set border to red
 
         }
         else if (t.getAttribute("id") == SELECTED)

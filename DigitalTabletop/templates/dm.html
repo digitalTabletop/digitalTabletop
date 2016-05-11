@@ -32,7 +32,7 @@
       propTemplate = '<li><input type="hidden" value="1" name="NAME"><span>NAME : </span><select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select><input name="NAME.size" type="text" placeholder="Size x,y"><input name="NAME.position" type="text" placeholder="Position x, y"></li>'
       NUMBER = 2
       function addProp() {
-        document.getElementById("props").innerHTML += propTemplate.replace("NAME", "prop"+NUMBER.toString());
+        document.getElementById("props").innerHTML += propTemplate.split("NAME").join("prop"+NUMBER.toString());
         NUMBER += 1
       }
       </script>

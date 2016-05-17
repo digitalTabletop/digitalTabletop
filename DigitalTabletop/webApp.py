@@ -5,7 +5,7 @@ from werkzeug import secure_filename
 
 
 mapDict = {"size":[2, 2]} # Default map size is 2x2
-UPLOAD_FOLDER = 'static/' # this means that all files uploaded will be accessable at /static/<filename>
+UPLOAD_FOLDER = 'static/assets' # this means that all files uploaded will be accessable at /static/<filename>
 ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"]) # Allowed image extensions for stuff and things
 
 
@@ -46,7 +46,7 @@ def dm():
             pass
 
     files = os.listdir(app.config["UPLOAD_FOLDER"]) # Show all images...
-    return render_template("dm.html", files=files)
+    return render_template("dm.html", files=files, MAP = mapDict)
 
 @app.route("/assets", methods=["POST", "GET"]) # Upload new files
 def assets():
@@ -64,6 +64,30 @@ def assets():
          <input type=submit value=Upload>
     </form>
     '''
+
+@app.route("/getmaps/<mapid>")
+def getmap(mapid):
+    try:
+        f = open("static/maps/"+mapid+".json", "r")
+    except FileNotFoundError:
+        abort(404)
+    return f.read()
+
+@app.route("/savemap/<mapid>")
+def savemap(mapid):
+    f = open("static/maps/"+mapid+".json", "w")
+    f.write(json.dumps(mapDict))
+    return redirect(url_for("dm"))
+
+@app.route("/setmap/<mapid>")
+def setmap(mapid):
+    global mapDict
+    try:
+        f = open("static/maps/"+mapid+".json", "r")
+    except FileNotFoundError:
+        abort(404)
+    mapDict = json.loads(f.read())
+    return redirect(url_for("dm"))
 
 
 if __name__ == "__main__":

@@ -8,17 +8,20 @@
     <a href="{{ url_for("assets")}}">Upload new Images</a>
     <form class="" action="/dm" method="post">
       MapSize:
-      <input name="size" type="text" placeholder="x,y">
+      <input name="size" type="text" placeholder="x,y" value={{ MAP["size"][0].__str__() + "," + MAP["size"][1].__str__() }}><br>
       Background:
       <select name="background">
         {% for file in files %}
-          <option value="{{ file }}">{{ file }}</option>
+          {% if file == MAP["background"] %}
+          <option value="{{ file }}" selected="selected">{{ file }}</option>
+          {% else %}
+          <option value="{{ file }}" >{{ file }}</option>
+          {% endif %}
         {% endfor %}
       </select>
       <ul id="props">
         <li>
           <input type="hidden" value="1" name="prop1">
-          <span>prop 1 : </span>
           <select name="prop1.image">
             {% for file in files %}
               <option value="{{ file }}">{{ file }}</option>
@@ -26,10 +29,10 @@
           </select>
           <input name="prop1.size" type="text" placeholder="Size x,y">
           <input name="prop1.position" type="text" placeholder="Position x, y">
-        </li>
+        </li><br>
       </ul>
       <script type="text/javascript">
-      propTemplate = '<li><input type="hidden" value="1" name="NAME"><span>NAME : </span><select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select><input name="NAME.size" type="text" placeholder="Size x,y"><input name="NAME.position" type="text" placeholder="Position x, y"></li>'
+      propTemplate = '<li><input type="hidden" value="1" name="NAME"><span></span> <select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select> <input name="NAME.size" type="text" placeholder="Size x,y"> <input name="NAME.position" type="text" placeholder="Position x, y"></li><br>'
       NUMBER = 2
       function addProp() {
         document.getElementById("props").innerHTML += propTemplate.split("NAME").join("prop"+NUMBER.toString());
@@ -39,5 +42,12 @@
       <a href="#" onclick="addProp();">Prop</a><br>
       <input type="submit" value="Submit">
     </form>
+    M
+    <input type="text" id="mapname" placeholder="mapname"><a id="savemap" href="#">Save</a>
+    <script>
+      document.getElementById("mapname").addEventListener("keypress", function(e){
+        document.getElementById("savemap").href = "/savemap/"+e.target.value;
+      });
+    </script>
   </body>
 </html>

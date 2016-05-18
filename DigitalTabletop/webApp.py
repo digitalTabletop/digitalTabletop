@@ -18,7 +18,7 @@ def allowed_file(filename): # return true if file is of allowed type
 
 @app.route("/")
 def index():
-    return render_template("grid.html", MAP=mapDict) # Return the grid software thing
+    return render_template("grid.html", MAP=mapDict, files=os.listdir(app.config["UPLOAD_FOLDER"])) # Return the grid software thing
 
 @app.route("/dm", methods=["POST","GET"]) # map configuration
 def dm():
@@ -30,10 +30,10 @@ def dm():
             mapDict["size"] = request.form.get("size").split(",")
         mapDict["props"] = {}
 
-        pn = 1 # this is the prop number
+        pn = 0 # this is the prop number
         try: # incase props arent defined
             for key in request.form.keys():
-                if "prop"+str(pn) == key:
+                if key[0:4] == "prop" and key[-1] not in ["e","n"]:
                     mapDict["props"][key] = {
                         "image" : request.form.get(key+".image"),
                         "sizeX" : request.form.get(key+".size").split(",")[0],
@@ -88,6 +88,18 @@ def setmap(mapid):
         abort(404)
     mapDict = json.loads(f.read())
     return redirect(url_for("dm"))
+
+@app.route("/update/<cid>/<x>/<y>") # this does not update other players screens, just allows new loads to see others positions
+def updateposition(cid, x, y):
+    global mapDict
+    if cid != "undefined":
+        if "characters" not in mapDict.keys():
+            mapDict["characters"] = {}
+        mapDict["characters"][cid] = {}
+        mapDict["characters"][cid]["x"] = x
+        mapDict["characters"][cid]["y"] = y
+        print(mapDict)
+    return "ok"
 
 
 if __name__ == "__main__":

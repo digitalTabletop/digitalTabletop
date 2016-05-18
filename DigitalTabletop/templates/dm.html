@@ -20,20 +20,39 @@
         {% endfor %}
       </select>
       <ul id="props">
+        {% for key in MAP["props"] %}
         <li>
-          <input type="hidden" value="1" name="prop1">
-          <select name="prop1.image">
+          <input type="hidden" value="1" name="{{key}}">
+          <select name="{{ key }}.image">
             {% for file in files %}
-              <option value="{{ file }}">{{ file }}</option>
+              {% if file == MAP["props"][key]["image"] %}
+                <option value="{{ file }}" selected="selected">{{ file }}</option>
+              {% else %}
+                <option value="{{ file }}">{{ file }}</option>
+              {% endif %}
             {% endfor %}
           </select>
-          <input name="prop1.size" type="text" placeholder="Size x,y">
-          <input name="prop1.position" type="text" placeholder="Position x, y">
+          <input name="{{key}}.size" type="text" placeholder="Size x,y" value={{ MAP["props"][key]["sizeX"].__str__() + "," + MAP["props"][key]["sizeY"] }}>
+          <input name="{{key}}.position" type="text" placeholder="Position x, y" value={{ MAP["props"][key]["x"].__str__() + "," + MAP["props"][key]["x"] }}>
         </li><br>
+        {% endfor %}
+        <li>
+          <input type="hidden" value="1" name={{"prop"+MAP["props"].__len__().__str__()}}>
+           <select name={{"prop"+MAP["props"].__len__().__str__()}}.image>
+             {% for file in files %}
+                <option value="{{ file }}">
+                  {{ file }}
+                </option>
+              {% endfor %}
+            </select>
+            <input name={{"prop"+MAP["props"].__len__().__str__()}}.size type="text" placeholder="Size x,y">
+            <input name={{"prop"+MAP["props"].__len__().__str__()}}.position type="text" placeholder="Position x, y">
+        </li>
+        <br>
       </ul>
       <script type="text/javascript">
       propTemplate = '<li><input type="hidden" value="1" name="NAME"><span></span> <select name="NAME.image">{% for file in files %}<option value="{{ file }}">{{ file }}</option>{% endfor %}</select> <input name="NAME.size" type="text" placeholder="Size x,y"> <input name="NAME.position" type="text" placeholder="Position x, y"></li><br>'
-      NUMBER = 2
+      NUMBER = {{ (MAP["props"].__len__() + 1).__str__()}};
       function addProp() {
         document.getElementById("props").innerHTML += propTemplate.split("NAME").join("prop"+NUMBER.toString());
         NUMBER += 1
@@ -42,7 +61,6 @@
       <a href="#" onclick="addProp();">Prop</a><br>
       <input type="submit" value="Submit">
     </form>
-    M
     <input type="text" id="mapname" placeholder="mapname"><a id="savemap" href="#">Save</a>
     <script>
       document.getElementById("mapname").addEventListener("keypress", function(e){

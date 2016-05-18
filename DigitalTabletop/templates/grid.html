@@ -24,11 +24,22 @@
         z-index: 1;
         position: absolute;
       }
-
-
+      .menu {
+        display: none;
+      }
+      li {
+        list-style: none;
+        background: white;
+        position: absolute;
+      }
     </style>
   </head>
   <body>
+    <ul class="menu">
+      {% for file in files %}
+        <li f="{{file}}">{{file}}</li>
+      {% endfor %}
+    </ul>
     <script type="text/javascript">
       var SELECTED = null;
       var ws = new WebSocket("ws://localhost:8080");
@@ -58,12 +69,10 @@
       // For each prop
       for (var item in MAP.props){
         if (MAP.props.hasOwnProperty(item)){
-          console.log(item);
           var prop = document.createElement("img")
-          prop.setAttribute("src", "/static/"+MAP.props[item].image);
+          prop.setAttribute("src", "/static/assets/"+MAP.props[item].image);
           prop.style["width"] = MAP.props[item].sizeX+"in";
           prop.style["height"] = MAP.props[item].sizeY+"in";
-          console.log(MAP.props[item].x, MAP.props[item].y)
           prop.style["position"] = "absolute";
           prop.style["z-index"] = "-1";
           prop.style["top"] = MAP.props[item].y+"in";
@@ -72,9 +81,16 @@
 
         }
       }
+      for (var item in MAP.characters){
+        if (MAP.characters.hasOwnProperty(item)){
+          var t = document.getElementById(MAP.characters[item].x+","+MAP.characters[item].y);
+          t.setAttribute("cid", item);
+          t.style["background"] = "url('/static/assets/Paladin.png')";
+          t.style["background-size"] = "1in 1in";
+        }
+      }
 
-      body.style["background-image"] = MAP.background;
-
+      body.style["background"] = "url(/static/assets/"+MAP.background+")";
       // Click event
       tbl.addEventListener("contextmenu", function(e){
         e.preventDefault();
@@ -99,7 +115,7 @@
         {
 
           e.target.setAttribute("cid", Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5));
-          e.target.style ="background:url('/static/Paladin.png'); background-size:1in 1in;"
+          e.target.style ="background:url('/static/assets/Paladin.png'); background-size:1in 1in;";
 
         }
         return false;
@@ -117,22 +133,21 @@
           t.style["border"] = "2px solid red"; // set border to red
 
         }
-        else if (t.getAttribute("id") == SELECTED)
+        else if (t.getAttribute("id") == SELECTED) // REMOVE SELECTION
         { // if the selected grid cell is clicked, do this
 
           document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
           SELECTED = null; // remove selected
 
         }
-        else if (t.getAttribute("id") != SELECTED && SELECTED != null && t.getAttribute("cid") == "")
+        else if (t.getAttribute("id") != SELECTED && SELECTED != null && t.getAttribute("cid") == "") // MOVE CHARACTER
         { // if a grid cell other than the selected one is clicked
-
+          var xhttp = new XMLHttpRequest;
           document.getElementById(SELECTED).style["border"] = "1px solid black"; // set border to black
 
           var cid = document.getElementById(SELECTED).getAttribute("cid");
           t.setAttribute("cid", cid);
           t.style["background"] =  document.getElementById(SELECTED).style["background"];
-          console.log(t.style["background"]);
           t.style["background-size"] = "1in 1in";
 
           var payload = {}; // initialize payload to be sent over websocket
@@ -141,17 +156,15 @@
           payload.avatar = document.getElementById(SELECTED).style["background"];
           payload.cid = document.getElementById(SELECTED).getAttribute("cid"); // get the id of character
 
-          console.log(payload); // log payload
-
           document.getElementById(SELECTED).setAttribute("cid", ""); // set cid to none
           document.getElementById(SELECTED).style["background"] = ""; // set background
 
 
-          ws.send(JSON.stringify(payload)); // send to server via websockets
-
+          //ws.send(JSON.stringify(payload)); // update position on all clients via websockets
+          xhttp.open("GET", "/update/"+payload.cid+"/"+payload.x+"/"+payload.y+"?t="+Math.random(), true);
+          xhttp.send();
           SELECTED = null;
         }
-        console.log(t.getAttribute("cid"));
       });
 
       //Recieve websocket messages
@@ -162,12 +175,10 @@
 
         for (var i=0; i<duplicateCells.length; i++)
         {
-          console.log(duplicateCells[i].id);
           duplicateCells[i].style["background"] = "";
           duplicateCells[i].setAttribute("cid", "");
         }
         var move_coords = move.x+","+move.y;
-        console.log(move_coords);
         document.getElementById(move_coords).style["background"] = move.avatar;
         document.getElementById(move_coords).setAttribute("cid", move.cid);
       }
